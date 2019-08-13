@@ -11,6 +11,13 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
+  int _people = 0;
+
+  void _changePeople(int delta){
+    setState(() {
+      _people += delta;      
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +31,7 @@ class _HomeState extends State<Home> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
-            "Pessoas: 0",
+            "Pessoas: $_people",
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           Row(
@@ -39,6 +46,7 @@ class _HomeState extends State<Home> {
                   ),
                   onPressed: () {
                     debugPrint("+1");
+                    _changePeople(1);
                   },
                 ),
               ),
@@ -51,6 +59,7 @@ class _HomeState extends State<Home> {
                   ),
                   onPressed: () {
                     debugPrint("-1");
+                    _changePeople(-1);
                   },
                 ),
               ),
