@@ -38,12 +38,17 @@ def eval(ast):
         return env[ast]
     elif isinstance(ast, float):
         return ast
+    elif ast[0] == 'if':
+        (_, test, conseq, alt) = ast
+        exp = (conseq if eval(test) else alt)
+
+        return exp
     else:
         func, *args = map(eval, ast)
         return func(*args)
 
 
 if __name__ == '__main__':
-    code = '(+ 3 (* 2 (/ 6 2)))'
+    code = '(if (<= 3 3) (2) (4))'
 
     print(eval(parse(lex(code))))
