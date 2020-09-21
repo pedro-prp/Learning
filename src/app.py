@@ -1,3 +1,6 @@
+from utils.constants import env
+
+
 def lex(code_str):
     return code_str.replace('(', ' ( ').replace(')', ' ) ').split()
 
@@ -24,13 +27,23 @@ def read(tokens):
     return res
 
 
-def parse(code):
-    code = [to_num(x) for x in code]
+def parse(tokens):
+    tokens = [to_num(x) for x in tokens]
 
-    return read(code)
+    return read(tokens)
+
+
+def eval(ast):
+    if isinstance(ast, str):
+        return env[ast]
+    elif isinstance(ast, float):
+        return ast
+    else:
+        func, *args = map(eval, ast)
+        return func(*args)
 
 
 if __name__ == '__main__':
-    code = '(+ 2 (* 2 1))'
+    code = '(+ 3 (* 2 (/ 6 2)))'
 
-    print(parse(lex(code)))
+    print(eval(parse(lex(code))))
