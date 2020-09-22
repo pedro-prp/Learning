@@ -48,7 +48,19 @@ def eval(ast):
         return func(*args)
 
 
-if __name__ == '__main__':
-    code = '(if (<= 3 3) (2) (4))'
+def schemestr(exp):
+    if isinstance(exp, list):
+        return '(' + ' '.join(map(schemestr, exp)) + ')'
+    else:
+        return str(exp)
 
-    print(eval(parse(lex(code))))
+
+def repl(prompt='lis.py> '):
+    while True:
+        val = eval(parse(lex(prompt)))
+        if val is not None:
+            print(schemestr(val))
+
+
+if __name__ == '__main__':
+    repl()
