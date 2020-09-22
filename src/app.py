@@ -1,5 +1,12 @@
 from utils.constants import env
 
+Symbol = str
+Number = (int, float)
+Atom = (Symbol, Number)
+List = list
+Exp = (Atom, List)
+Env = dict
+
 
 def lex(code_str):
     return code_str.replace('(', ' ( ').replace(')', ' ) ').split()
@@ -7,60 +14,54 @@ def lex(code_str):
 
 def to_num(token):
     try:
-        return float(token)
+        return int(token)
     except ValueError:
-        return token
+        try:
+            return float(token)
+        except ValueError:
+            return token
 
 
 def read(tokens):
+    if len(tokens) == 0:
+        raise SyntaxError('unexpected EOF')
+
     token = tokens.pop(0)
-
-    if token != '(':
-        return token
-
-    res = []
-    while tokens[0] != ')':
-        elem = read(tokens)
-        res.append(elem)
-
-    del tokens[0]
-    return res
+    if token == '(':
+        L = []
+        while tokens[0] != ')':
+            L.append(read(tokens))
+        tokens.pop(0)
+        return L
+    elif token == ')':
+        raise SyntaxError('unexpected )')
+    else:
+        return to_num(token)
 
 
 def parse(tokens):
-    tokens = [to_num(x) for x in tokens]
-
     return read(tokens)
 
 
-def eval(ast):
-    if isinstance(ast, str):
-        return env[ast]
-    elif isinstance(ast, float):
-        return ast
-    elif ast[0] == 'if':
-        (_, test, conseq, alt) = ast
+def eval(code):
+    if isinstance(code, str):
+        return env[code]
+    elif isinstance(code, (int, float)):
+        return code
+    elif code[0] == 'if':
+        (_, test, conseq, alt) = code
         exp = (conseq if eval(test) else alt)
-
-        return exp
+        return eval(exp)
+    elif code[0] == 'define':
+        (_, symbol, exp) = code
+        env[symbol] = eval(exp)
     else:
-        func, *args = map(eval, ast)
-        return func(*args)
-
-
-def schemestr(exp):
-    if isinstance(exp, list):
-        return '(' + ' '.join(map(schemestr, exp)) + ')'
-    else:
-        return str(exp)
-
-
-def repl(prompt='lis.py> '):
-    while True:
-        val = eval(parse(lex(prompt)))
-        if val is not None:
-            print(schemestr(val))
+        proc = eval(code[0])
+        args = [eval(arg) for arg in code[1:]]
+        return proc(*args)
 
 
 if __name__ == '__main__':
-    repl()
+    code = '(begin (define r 10) (* pi (* r r)))'
+
+    print(eval(parse(lex(code))))

@@ -1,7 +1,10 @@
 import operator as op
+import math
+
 
 env = dict()
-env = {
+env.update(vars(math))
+env.update({
     '+': op.add,
     '-': op.sub,
     '/': op.truediv,
@@ -11,4 +14,5 @@ env = {
     '>': op.gt,
     '<=': op.le,
     '>=': op.ge,
-}
+    'begin': lambda *x: x[-1],
+})
