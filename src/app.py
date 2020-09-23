@@ -62,7 +62,6 @@ def eval(code):
 
 
 def repl(prompt='lis.py> '):
-    "A prompt-read-eval-print loop."
     while True:
         print(prompt, end='')
         code = input()
@@ -72,7 +71,6 @@ def repl(prompt='lis.py> '):
 
 
 def schemestr(exp):
-    "Convert a Python object back into a Scheme-readable string."
     if isinstance(exp, List):
         return '(' + ' '.join(map(schemestr, exp)) + ')' 
     else:
