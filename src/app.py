@@ -61,7 +61,23 @@ def eval(code):
         return proc(*args)
 
 
-if __name__ == '__main__':
-    code = '(begin (define r 10) (* pi (* r r)))'
+def repl(prompt='lis.py> '):
+    "A prompt-read-eval-print loop."
+    while True:
+        print(prompt, end='')
+        code = input()
+        val = eval(parse(lex(code)))
+        if val is not None:
+            print(schemestr(val))
 
-    print(eval(parse(lex(code))))
+
+def schemestr(exp):
+    "Convert a Python object back into a Scheme-readable string."
+    if isinstance(exp, List):
+        return '(' + ' '.join(map(schemestr, exp)) + ')' 
+    else:
+        return str(exp)
+
+
+if __name__ == '__main__':
+    repl()
