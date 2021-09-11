@@ -1,0 +1,7 @@
+*
+!.gitignore
+!*.hs
+!uri
+!uri/*.hs
+!tutorial
+!tutorial/*.hs
